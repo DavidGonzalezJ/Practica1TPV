@@ -9,7 +9,10 @@ public:
 	TexturasSDL();
 	~TexturasSDL();
 	bool load(SDL_Renderer* pRender, std::string const& nombArch, SDL_Texture* & pTextura);
-	void draw(SDL_Renderer* pRender, SDL_Rect const& rect);
+	void draw(SDL_Renderer* pRender, SDL_Rect const& rect, SDL_Texture* pTextura);
+	//Método necesario para obtener el globRect que necesita la clase globo para el tamaño
+	SDL_Rect daTamaño();
+	SDL_Texture* daTextura();
 private:
 	SDL_Texture* pTextura;
 	SDL_Rect globRect;

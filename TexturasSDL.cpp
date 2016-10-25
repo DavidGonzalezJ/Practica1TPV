@@ -10,7 +10,7 @@ TexturasSDL::~TexturasSDL()
 {
 }
 
-bool load(SDL_Renderer* pRender, std::string const& nombArch,SDL_Texture* & pTextura) {
+bool TexturasSDL::load(SDL_Renderer* pRender, std::string const& nombArch,SDL_Texture* & pTextura) {
 	//The image we will load es nombArch
 	//std::string imgName{ nombArch };
 
@@ -31,13 +31,22 @@ bool load(SDL_Renderer* pRender, std::string const& nombArch,SDL_Texture* & pTex
 	return success;
 }/*Carga la imagen del archivo. En caso de error lo muestra y devuelve false, y en otro caso genera la textura. Cuidado con la anterior textura. */
 
-void draw(SDL_Renderer* pRender, SDL_Rect const& rect,SDL_Texture* pTextura) {
+void TexturasSDL::draw(SDL_Renderer* pRender, SDL_Rect const& rect,SDL_Texture* pTextura) {
+	//ESTO SEGURAMENTE NO LO TENGA QUE HACER ESTE METODO
 	//Clear the window to background color 
-	SDL_RenderClear(pRender);
+	//SDL_RenderClear(pRender);
 
 	// Draw objets 
 	SDL_RenderCopy(pRender, pTextura, nullptr /*Toda la textura*/, & rect /*En el rectángulo rect*/);  // nullptr, nullptr -> toda la textura en toda la ventana
 
+	//ES POSIBLE QUE ESTO TAMPOCO LO TENGA QUE HACER
 	//Show the window
-	SDL_RenderPresent(pRender);
+	//SDL_RenderPresent(pRender);
 }//Dibuja toda la textura en el rectángulo rect.
+
+SDL_Rect TexturasSDL::daTamaño() {
+	return globRect;
+}
+SDL_Texture* TexturasSDL::daTextura() {
+	return pTextura;
+}

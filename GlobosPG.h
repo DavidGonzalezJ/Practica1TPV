@@ -4,15 +4,18 @@
 class GlobosPG
 {
 public:
-	GlobosPG(TexturasSDL* img, int px, int py);
+	GlobosPG(TexturasSDL* pText, int px, int py);
 	~GlobosPG();
-	void draw(SDL_Renderer*) const;
+	void draw(SDL_Renderer* pRender) const;
 	bool onClick(int pmx, int pmy);
 	bool update();
 private:
-	TexturasSDL* img;
-	int px;
-	int py;
+	TexturasSDL* pTextura;
+	SDL_Rect tam; //Tamaño total
+	int pX;
+	int pY;
+	bool expl;
+	bool vis;
 	static const int PVIS = 70; //La probabilidad de que un globo esté visible
 	static const int PDES = 30; //La probabilidad de que se desinfle
 	static const int DT = 5; //Disminución tamaño
