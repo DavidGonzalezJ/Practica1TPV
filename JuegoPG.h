@@ -2,6 +2,8 @@
 #include <SDL.h>
 #include <vector>
 #include "GlobosPG.h"
+#include "TexturasSDL.h"
+#include "Sound_SDL.h"
 //Cabeceras, declaraciones de todo lo necesario para el juego
 class JuegoPG
 {
@@ -9,16 +11,24 @@ public:
 	JuegoPG();
 	~JuegoPG();
 	void run();
-	void onExit();
+	//void onExit();
 private:
-	SDL_Renderer* pRender;
-	SDL_Window* pWindow;
+
+	int numGlobos = 20;
+	const int SCREEN_WIDTH = 640;   //Screen dimension
+	const int SCREEN_HEIGHT = 480;  //Screen dimension
+	SDL_Renderer* pRender; 
+	SDL_Window* pWindow; 
 	SDL_Color color;
+	SDL_Rect* fRect; //Este será el rectangulo de fondo de la textura
 	std::vector<GlobosPG*> pGlobos;
-	SDL_Texture* pTextura;
+	std::vector<TexturasSDL*> pTexturaG;
+	Sound_SDL* sonido;
+
 	int tiempo, puntuacion;
-	bool error, salir;
-	int lastUpdate, MSxUpdate;
+	bool error, exit;
+	//int lastUpdate, MSxUpdate;
+	bool gameOver();
 	bool initSDL(); // Inicia el renderizador.En caso de error, muestra un mensaje y deja todos los atributos con valores nulos.
 	void closeSDL(); //Libera los atributos iniciados en initSDL.
 	bool initGlobos();//Crea las texturas para los globos y todos los globos.
@@ -29,5 +39,8 @@ private:
 	void handle_event(); /*Comprueba si se ha producido el evento SDL_Quit o el evento soltar el botón
 	izquierdo del ratón. Para el caso SDL_Quit, ejecuta onExit(). En el otro caso, ejecuta onClick(),
 	pasando como argumentos la posición del ratón.*/
+	void onExit();
+	void initMusic();
+	void muestraMensaje();
 };
 
