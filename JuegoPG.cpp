@@ -1,7 +1,5 @@
 #include "JuegoPG.h"
 #include <iostream>
-using namespace std;
-//Implementación del programa guay
 
 JuegoPG::JuegoPG()
 {
@@ -9,8 +7,6 @@ JuegoPG::JuegoPG()
 	initSDL();
 	initMusic();
 	initGlobos();
-	color; //no asignada
-	tiempo; 
 	puntuacion=0;
 	error = false;
 	exit = false;
@@ -23,16 +19,13 @@ JuegoPG::~JuegoPG()
 	closeSDL();
 }
 
-void JuegoPG::muestraMensaje() {
-	SDL_DisplayMode dm;
-	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
-		"PLAY GAME", "Ready?", nullptr);
+void JuegoPG::muestraMensaje(std::string info, std::string boton) {
+	//SDL_DisplayMode dm;
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, info.c_str(), boton.c_str(), nullptr);
 }
 
 void JuegoPG::initMusic() {
 	sonido = new Sound_SDL("AllStar.wav", "Hitmarker.wav");
-	//sonido->soundInit();
-	//sonido->load("MusicaFondo.mp3","Hitmarker.wav");
 }
 
 //Este metodo da valor al pRender y al pWindow
@@ -55,7 +48,6 @@ bool JuegoPG::initSDL() {
 		else {
 			//Get window surface:
 			pRender = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED);
-			//SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255); //Set background color to black 
 			if (pRender == nullptr){
 				std::cout << "Renderer could not be created! \nSDL_Error: " << SDL_GetError() << '\n';
 				success = false;
@@ -66,7 +58,7 @@ bool JuegoPG::initSDL() {
 	return success;
 }
 
-//Este metodo borra el pWindow y el pRender y desinicializa el SDL
+//Este metodo borra el pWindow y el pRender y cierra el SDL
 void JuegoPG::closeSDL() {
 
 	SDL_DestroyRenderer(pRender);
@@ -84,24 +76,22 @@ bool JuegoPG::initGlobos(){
 	pTexturaG[0]->load(pRender, "Globo.png");
 	pTexturaG.emplace_back(new TexturasSDL());
 	pTexturaG[1]->load(pRender, "fondo.png");
-	//Esta parte podríamos hacerla de otra forma para no tener que
-	//Pasar un SDL_Rect al render, sino un nullptr
+	pTexturaG.emplace_back(new TexturasSDL());
+	//Creamos un SDL_Rect para pasarselo después al render
 	fRect = new SDL_Rect();
 	fRect->h = SCREEN_HEIGHT;
 	fRect->w = SCREEN_WIDTH;
 	fRect->x = 0;
 	fRect->y = 0;
 	//Ahora creamos los globos
-	for (int n = 0; n < numGlobos; ++n){//numero de globos empezamos con uno para ver si funciona
-		//Aquí asignamos los booleanos
-		//pGlobos.emplace_back(new GlobosPG(pTexturaG, n*100, n*160));
+	for (int n = 0; n < numGlobos; ++n){
 		pGlobos.emplace_back(new GlobosPG(pTexturaG[0], rand() % 720, rand() % 480));
 	}
 	return success;
 }
 
 void JuegoPG::freeGlobos() {
-	for (int n = 0; n < numGlobos; ++n){//numero de globos empezamos con uno para ver si funciona
+	for (int n = 0; n < numGlobos; ++n){
 		delete pGlobos[n];
 		pGlobos[n] = nullptr;
 	}
@@ -110,6 +100,8 @@ void JuegoPG::freeGlobos() {
 	pTexturaG[0] = nullptr;
 	delete pTexturaG[1];
 	pTexturaG[1] = nullptr;
+	delete pTexturaG[2];
+	pTexturaG[2] = nullptr;
 }
 
 
@@ -117,15 +109,12 @@ void JuegoPG::freeGlobos() {
 void JuegoPG::run() {
 	if (!error) {
 		Uint32 MSxUpdate = 500;
-		cout << "PLAY \n";
+		std::cout << "PLAY \n";
 		Uint32 lastUpdate = SDL_GetTicks();
-		//Aquí saco el mensaje
-		muestraMensaje();
-		//Aquí pongo a sonar la musica
+		muestraMensaje("PLAY", "Ready?");
 		sonido->playMusic();
 		render();
 		handle_event();
-		//No sé en qué momento deberían cambiar de valor exit y error
 		while (!exit && !error && numGlobos>0) {
 			if (SDL_GetTicks() - lastUpdate >= MSxUpdate){ // while(elapsed >= MSxUpdate)
 				update();
@@ -135,18 +124,17 @@ void JuegoPG::run() {
 			handle_event();
 		}
 
-		if (exit) cout << "EXIT \n";
-		else cout << "Has obtenido " << puntuacion << " puntos\n";
-		//Aquí apago el sonido
+		if (exit) std::cout << "EXIT \n";
+		else std::cout << "Has obtenido " << puntuacion << " puntos\n";
+		std::string puntos = std::to_string(puntuacion);
+		muestraMensaje("ENHORABUENA", "Has obtenido " + puntos);
 		sonido->close();
 		SDL_Delay(1000); //cin.get();
 	}
 }
 
 void JuegoPG::onExit() {
-	//Supongo que ejecuta la destructora del juego
 	exit = true;
-
 }
 
 void JuegoPG::handle_event(){
@@ -155,7 +143,7 @@ void JuegoPG::handle_event(){
 		if (e.type == SDL_QUIT) onExit();
 		else if (e.type == SDL_MOUSEBUTTONUP) {
 			if (e.button.button == SDL_BUTTON_LEFT) {
-				cout << "CLICK \n";
+				std::cout << "CLICK \n";
 				onClick(e.button.x, e.button.y);
 			}
 			// else if(...)    
@@ -165,36 +153,31 @@ void JuegoPG::handle_event(){
 
 void JuegoPG::render()const{
 	SDL_RenderClear(pRender);
-	//Creamos y dibujamos la textura para el fondo
-	/*TexturasSDL* fondo = new TexturasSDL();
-	fondo->load(pRender, "fondo.png");
-	SDL_Rect* fRect = new SDL_Rect();
-	fRect->h = SCREEN_HEIGHT;
-	fRect->w = SCREEN_WIDTH;
-	fRect->x = 0;
-	fRect->y = 0;*/
 	pTexturaG[1]->draw(pRender, *fRect);
 
 	for each (GlobosPG* g in pGlobos)
 	{
 		g->draw(pRender);
 	}
-	SDL_RenderPresent(pRender);//Este no sé si va dentro o fuera del bucle
+	std::string puntos = std::to_string(puntuacion);
+	pTexturaG[2]->renderText(pRender, puntos);
+	SDL_RenderPresent(pRender);
 }
+
 bool JuegoPG::gameOver(){
 	return numGlobos <= 0;
 }
+
 void JuegoPG::update() {
 	for each (GlobosPG* g in pGlobos)
 	{
 		if (g->update()) {
 			--numGlobos;
-			//Hay que actualizar el numero de globos que quedan activos (no sé si está bien)
 			g = nullptr;
 		}
 	}
-
 }
+
 void JuegoPG::onClick(int mpx, int mpy){
 	
 	for each (GlobosPG* g in pGlobos)

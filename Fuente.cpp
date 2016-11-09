@@ -1,4 +1,4 @@
-/*#include "Fuente.h"
+#include "Fuente.h"
 
 
 
@@ -23,4 +23,4 @@ void Fuente::close() {
 
 SDL_Surface* Fuente::textSolid(std::string texto, SDL_Color color) {
 	return TTF_RenderText_Solid(pFont, texto.c_str(), color);
-}*/
+}

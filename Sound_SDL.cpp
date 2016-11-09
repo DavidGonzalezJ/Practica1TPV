@@ -19,14 +19,13 @@ void Sound_SDL::load(std::string musica, std::string efecto) {
 }
 
 void Sound_SDL::soundInit() {
-	Mix_Init(1);
+	Mix_Init(27);
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 }
 
 void Sound_SDL::playMusic() {
 	if (Mix_PlayMusic(pMusic, -1) == -1)
 		printf("Mix_PlayMusic: %s\n", Mix_GetError());
-	//Mix_PlayMusic(pMusic, -1);
 }
 
 void Sound_SDL::playEffect() {

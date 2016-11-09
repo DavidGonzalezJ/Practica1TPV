@@ -11,11 +11,9 @@ public:
 	bool update();
 	int puntos;
 	SDL_Rect* tamPos; //Tamaño total (Toma el Ancho y el Alto de la textura)
+
 private:
 	TexturasSDL* pTexturaG;
-	//Las dos variables siguientes posiblemente entren dentro de la anterior
-	/*int pX;
-	int pY;*/
 	bool expl;
 	bool vis;
 	static const int PVIS = 70; //La probabilidad de que un globo esté visible

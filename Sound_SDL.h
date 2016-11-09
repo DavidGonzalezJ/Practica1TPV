@@ -12,6 +12,7 @@ public:
 	void playEffect();
 	void load(std::string musica,std::string efecto);
 	void close();
+
 private:
 	Mix_Music* pMusic;
 	Mix_Chunk* pEffect;
